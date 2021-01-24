@@ -1,4 +1,5 @@
 use super::*;
+use std::fs::File;
 use std::io::{Read, Write};
 
 const TEST_FILE_SIZE: usize = 256;
@@ -20,34 +21,37 @@ fn open_temp_file(name: &str, mode: Mode) -> File {
     }
 }
 
+fn check_file(file: &str, expected: &[u8]) -> bool {
+    let mut actual = Vec::new();
+    let mut file = open_temp_file(file, Read);
+    file.read_to_end(&mut actual).unwrap();
+
+    return actual == expected;
+}
+
+fn write_to_file(file: &str, data: &[u8]) {
+    let mut file = open_temp_file(file, Write);
+    file.write_all(data).unwrap();
+}
+
 #[test]
 fn encrypt_random() {
-    let mut clear_file = open_temp_file("encrypt.clear", Write);
-    clear_file.write_all(&SAMPLE_DATA).unwrap();
+    write_to_file("encrypt.clear", &SAMPLE_DATA);
 
     let clear_file = open_temp_file("encrypt.clear", Read);
     let mut cipher_file = open_temp_file("encrypt.cipher", Write);
     encrypt_file(&clear_file, &mut cipher_file).unwrap();
 
-    let mut actual = Vec::new();
-    let mut cipher_file = open_temp_file("encrypt.cipher", Read);
-    cipher_file.read_to_end(&mut actual).unwrap();
-
-    assert_eq!(actual[..], EXPECTED_CIPHER);
+    assert!(check_file("encrypt.cipher", &EXPECTED_CIPHER));
 }
 
 #[test]
 fn decrypt_random() {
-    let mut cipher_file = open_temp_file("decrypt.cipher", Write);
-    cipher_file.write_all(&EXPECTED_CIPHER).unwrap();
+    write_to_file("decrypt.cipher", &EXPECTED_CIPHER);
 
     let cipher_file = open_temp_file("decrypt.cipher", Read);
     let mut decrypted_file = open_temp_file("decrypt.decrypted", Write);
     decrypt_file(&cipher_file, &mut decrypted_file).unwrap();
 
-    let mut decrypted_file = open_temp_file("decrypt.decrypted", Read);
-    let mut actual = Vec::new();
-    decrypted_file.read_to_end(&mut actual).unwrap();
-
-    assert_eq!(actual[..], SAMPLE_DATA)
+    assert!(check_file("decrypt.decrypted", &SAMPLE_DATA));
 }
