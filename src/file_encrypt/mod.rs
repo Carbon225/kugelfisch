@@ -1,15 +1,16 @@
 #[cfg(test)]
 mod tests;
 
-use std::fs::File;
-use std::io::{Read, Write};
 use crate::cbc::{Encryptor, Decryptor, BlockProcessor};
+use std::io::{Read, Write};
+use std::fs::File;
+use std::error::Error;
 
 fn algo(x: u64) -> u64 {
     !x
 }
 
-fn process_file(cbc: &mut dyn BlockProcessor<u64>, ifile: &File, ofile: &mut File) -> Result<(), std::io::Error> {
+fn process_file(cbc: &mut dyn BlockProcessor<u64>, ifile: &File, ofile: &mut dyn Write) -> Result<(), Box<dyn Error>> {
     let mut block = 0;
     let mut pad = 0;
     for (i, b) in ifile.bytes().enumerate() {
@@ -32,7 +33,7 @@ fn process_file(cbc: &mut dyn BlockProcessor<u64>, ifile: &File, ofile: &mut Fil
     Ok(())
 }
 
-pub fn encrypt_file(ifile: &File, ofile: &mut File) -> Result<(), std::io::Error> {
+pub fn encrypt_file(ifile: &File, ofile: &mut dyn Write) -> Result<(), Box<dyn Error>> {
     // TODO generate IV
     let iv: u64 = 0x6162616261626162;
     ofile.write_all(&iv.to_be_bytes())?;
@@ -43,7 +44,7 @@ pub fn encrypt_file(ifile: &File, ofile: &mut File) -> Result<(), std::io::Error
     Ok(())
 }
 
-pub fn decrypt_file(ifile: &File, ofile: &mut File) -> Result<(), std::io::Error> {
+pub fn decrypt_file(ifile: &File, ofile: &mut dyn Write) -> Result<(), Box<dyn Error>> {
     let mut iv: [u8; 8] = [0; 8];
     for (i, byte) in ifile.bytes().take(8).enumerate() {
         iv[i] = byte?;
