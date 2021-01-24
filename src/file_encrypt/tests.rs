@@ -38,9 +38,9 @@ fn write_to_file(file: &str, data: &[u8]) {
 fn encrypt_random() {
     write_to_file("encrypt.clear", &SAMPLE_DATA);
 
-    let clear_file = open_temp_file("encrypt.clear", Read);
+    let mut clear_file = open_temp_file("encrypt.clear", Read);
     let mut cipher_file = open_temp_file("encrypt.cipher", Write);
-    encrypt_file(&clear_file, &mut cipher_file).unwrap();
+    encrypt_file(&mut clear_file, &mut cipher_file).unwrap();
 
     assert!(check_file("encrypt.cipher", &EXPECTED_CIPHER));
 }
@@ -49,9 +49,9 @@ fn encrypt_random() {
 fn decrypt_random() {
     write_to_file("decrypt.cipher", &EXPECTED_CIPHER);
 
-    let cipher_file = open_temp_file("decrypt.cipher", Read);
+    let mut cipher_file = open_temp_file("decrypt.cipher", Read);
     let mut decrypted_file = open_temp_file("decrypt.decrypted", Write);
-    decrypt_file(&cipher_file, &mut decrypted_file).unwrap();
+    decrypt_file(&mut cipher_file, &mut decrypted_file).unwrap();
 
     assert!(check_file("decrypt.decrypted", &SAMPLE_DATA));
 }

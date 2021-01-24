@@ -1,6 +1,6 @@
 use kugelfisch::file_encrypt::{encrypt_file, decrypt_file};
 use std::fs::File;
-use std::io::{Write};
+use std::io::{Read, Write};
 use std::error::Error;
 use std::fmt::{Display, Debug, Formatter};
 
@@ -25,22 +25,23 @@ impl Display for ProgramError {
 
 impl Error for ProgramError {}
 
-fn process_file(path: &str, out: &str, op: fn(&File, &mut dyn Write) -> Result<(), Box<dyn Error>>) -> Result<(), Box<dyn Error>> {
-    let ifile = match File::open(path) {
+fn process_file(path: &str, out: &str,
+                op: fn(&mut dyn Read,&mut dyn Write) -> Result<(), Box<dyn Error>>) -> Result<(), Box<dyn Error>> {
+    let mut i_file = match File::open(path) {
         Ok(f) => f,
         Err(e) => {
             return Err(Box::from(ProgramError::ErrorOpening(String::from(path), Box::from(e))));
         }
     };
 
-    let mut ofile = match File::create(out) {
+    let mut o_file = match File::create(out) {
         Ok(f) => f,
         Err(e) => {
             return Err(Box::from(ProgramError::ErrorCreating(String::from(out), Box::from(e))));
         }
     };
 
-    if let Err(e) = op(&ifile, &mut ofile) {
+    if let Err(e) = op(&mut i_file, &mut o_file) {
         return Err(Box::from(ProgramError::OperationFailed(Box::from(e))));
     };
 
