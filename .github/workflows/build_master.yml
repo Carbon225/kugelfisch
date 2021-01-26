@@ -13,7 +13,7 @@ jobs:
   build:
     strategy:
       matrix:
-        os: ["windows-2019", "ubuntu-20.04"]
+        os: ['windows-2019', 'ubuntu-20.04']
         
     runs-on: ${{ matrix.os }}
             
@@ -27,14 +27,14 @@ jobs:
       run: cargo test --verbose
     
     - name: Upload artifacts
-      if: startsWith(matrix.os, "windows")
+      if: startsWith(matrix.os, 'windows')
       uses: actions/upload-artifact@v2
       with:
         name: kugelfisch-debug-windows-amd64
         path: target/debug/kugelfisch.exe
     
     - name: Upload artifacts
-      if: startsWith(matrix.os, "ubuntu")
+      if: startsWith(matrix.os, 'ubuntu')
       uses: actions/upload-artifact@v2
       with:
         name: kugelfisch-debug-linux-amd64
