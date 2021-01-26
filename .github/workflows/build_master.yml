@@ -10,34 +10,31 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  build-windows:
-    
-    runs-on: windows-2019
-    
+  build:
+    strategy:
+      matrix:
+        os: ["windows-2019", "ubuntu-20.04"]
+        
+    runs-on: ${{os}}
+            
     steps:
     - uses: actions/checkout@v2
+      
     - name: Build
       run: cargo build --verbose
+    
     - name: Run tests
       run: cargo test --verbose
+    
     - name: Upload artifacts
+      if: startsWith(matrix.os, "windows")
       uses: actions/upload-artifact@v2
       with:
         name: kugelfisch-debug-windows-amd64
         path: target/debug/kugelfisch.exe
-        
-        
-  build-linux:
-
-    runs-on: ubuntu-20.04
-
-    steps:
-    - uses: actions/checkout@v2
-    - name: Build
-      run: cargo build --verbose
-    - name: Run tests
-      run: cargo test --verbose
+    
     - name: Upload artifacts
+      if: startsWith(matrix.os, "ubuntu")
       uses: actions/upload-artifact@v2
       with:
         name: kugelfisch-debug-linux-amd64
