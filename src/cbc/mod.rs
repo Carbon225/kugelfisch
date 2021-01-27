@@ -17,6 +17,7 @@ pub fn cbc_decrypt<T, F>(block: T, prev: T, algo: &F) -> T
     algo(block) ^ prev
 }
 
+#[allow(dead_code)]
 pub fn encrypt_blocks<T, F>(blocks: &mut [T], algo: &F)
     where T: Block<T>, F: Algo<T> {
     for i in 1..blocks.len() {
@@ -24,6 +25,7 @@ pub fn encrypt_blocks<T, F>(blocks: &mut [T], algo: &F)
     }
 }
 
+#[allow(dead_code)]
 pub fn decrypt_blocks<T, F>(blocks: &mut [T], algo: &F)
     where T: Block<T>, F: Algo<T> {
     for i in (1..blocks.len()).rev() {
