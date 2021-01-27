@@ -27,9 +27,9 @@ fn process_file(cbc: &mut dyn BlockProcessor<u64>,
 }
 
 pub fn encrypt_file(input: &mut dyn Read,
-                    output: &mut dyn Write) -> Result<(), Box<dyn Error>> {
-    // TODO generate IV
-    let iv: u64 = 0x6162616261626162;
+                    output: &mut dyn Write,
+                    iv: Option<u64>) -> Result<(), Box<dyn Error>> {
+    let iv: u64 = iv.unwrap_or_else(|| rand::random());
     output.write_all(&iv.to_le_bytes())?;
 
     let mut encryptor = Encryptor::new(&algo, iv);

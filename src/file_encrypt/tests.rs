@@ -42,7 +42,8 @@ fn encrypts_sample() {
 
     let mut clear_file = open_temp_file("encrypt.clear", Read);
     let mut cipher_file = open_temp_file("encrypt.cipher", Write);
-    encrypt_file(&mut clear_file, &mut cipher_file).unwrap();
+    let iv = u64::from_le_bytes([98, 97, 98, 97, 98, 97, 98, 97]);
+    encrypt_file(&mut clear_file, &mut cipher_file, Some(iv)).unwrap();
 
     check_file("encrypt.cipher", &EXPECTED_CIPHER);
 }
@@ -64,7 +65,7 @@ fn encrypts_and_decrypts() {
 
     let mut clear_file = open_temp_file("enc_dec.clear", Read);
     let mut cipher_file = open_temp_file("enc_dec.cipher", Write);
-    encrypt_file(&mut clear_file, &mut cipher_file).unwrap();
+    encrypt_file(&mut clear_file, &mut cipher_file, None).unwrap();
 
     let mut cipher_file = open_temp_file("enc_dec.cipher", Read);
     let mut decrypted_file = open_temp_file("enc_dec.decrypted", Write);

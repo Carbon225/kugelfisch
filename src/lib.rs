@@ -71,7 +71,7 @@ fn handle_encrypt(path: &str, passphrase: Option<&str>) -> Result<(), ProgramErr
         .map_err(|e| ProgramError::OperationFailed(Box::from(e)))?;
 
     println!("Encrypting {} to {}", path, out_path);
-    process_file(path, out_path.as_str(), encrypt_file)
+    process_file(path, out_path.as_str(), |i, o| encrypt_file(i, o, None))
 }
 
 fn handle_decrypt(path: &str, passphrase: Option<&str>) -> Result<(), ProgramError> {
@@ -81,11 +81,12 @@ fn handle_decrypt(path: &str, passphrase: Option<&str>) -> Result<(), ProgramErr
         .map_err(|e| ProgramError::OperationFailed(Box::from(e)))?;
 
     println!("Decrypting {} to {}", path, out_path);
-    process_file(path, out_path.as_str(), decrypt_file)
+    process_file(path, out_path.as_str(), &decrypt_file)
 }
 
-fn process_file(path: &str, out: &str,
-                op: fn(&mut dyn Read,&mut dyn Write) -> Result<(), Box<dyn Error>>) -> Result<(), ProgramError> {
+fn process_file<F>(path: &str, out: &str,
+                op: F) -> Result<(), ProgramError>
+                where F: Fn(&mut dyn Read, &mut dyn Write) -> Result<(), Box<dyn Error>> {
     let mut i_file = match File::open(path) {
         Ok(f) => f,
         Err(e) => {
