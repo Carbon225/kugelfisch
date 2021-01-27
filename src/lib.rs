@@ -54,10 +54,11 @@ pub fn run_program(intent: &ProgramIntent) -> Result<(), ProgramError> {
 
 fn get_passphrase(option: Option<&str>) -> Result<String, std::io::Error> {
     if let Some(pass) = option {
-        println!("Using passphrase {}", pass);
+        println!("Using passphrase '{}'", pass);
         Ok(String::from(pass))
     } else {
         print!("Enter passphrase: ");
+        std::io::stdout().flush()?;
         let mut pass = String::new();
         std::io::stdin().read_line(&mut pass)?;
         Ok(pass)
