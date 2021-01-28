@@ -43,8 +43,8 @@ jobs:
       uses: actions/upload-release-asset@v1
       with:
         upload_url: ${{ needs.create-release.outputs.upload_url }}
-        asset_path: target/release/kugelfisch
-        asset_name: 'kugelfisch-linux-amd64'
+        asset_path: ./target/release/kugelfisch
+        asset_name: kugelfisch-linux-amd64
         asset_content_type: application/octet-stream
         
     - name: Upload release assets (Windows)
@@ -52,8 +52,8 @@ jobs:
       uses: actions/upload-release-asset@v1
       with:
         upload_url: ${{ needs.create-release.outputs.upload_url }}
-        asset_path: target/release/kugelfisch.exe
-        asset_name: 'kugelfisch-windows-amd64.exe'
+        asset_path: ./target/release/kugelfisch.exe
+        asset_name: kugelfisch-windows-amd64.exe
         asset_content_type: application/vnd.microsoft.portable-executable
       
   create-release:
@@ -69,5 +69,5 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         tag_name: ${{ github.ref }}
-        release_name: New release draft
+        release_name: New release draft ${{ github.ref }}
         draft: true
