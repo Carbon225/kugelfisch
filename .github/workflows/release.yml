@@ -2,7 +2,8 @@ name: Release
 
 on:
   push:
-    branches: [ release ]
+    tags:
+      - 'v*'
 
 env:
   CARGO_TERM_COLOR: always
@@ -56,7 +57,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ needs.create-release.outputs.upload_url }}
-        asset_path: ./target/release/kugelfisch.exe
+        asset_path: target\release\kugelfisch.exe
         asset_name: kugelfisch-windows-amd64.exe
         asset_content_type: application/vnd.microsoft.portable-executable
       
