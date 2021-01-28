@@ -40,7 +40,7 @@ jobs:
       run: cargo build --release --verbose
       
     - name: Upload release assets (Linux)
-      if: startsWith(${{ matrix.os }}, 'ubuntu')
+      if: startsWith(matrix.os, 'ubuntu')
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -51,13 +51,13 @@ jobs:
         asset_content_type: application/octet-stream
         
     - name: Upload release assets (Windows)
-      if: startsWith(${{ matrix.os }}, 'windows')
+      if: startsWith(matrix.os, 'windows')
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ needs.create-release.outputs.upload_url }}
-        asset_path: target\release\kugelfisch.exe
+        asset_path: ./target/release/kugelfisch.exe
         asset_name: kugelfisch-windows-amd64.exe
         asset_content_type: application/vnd.microsoft.portable-executable
       
@@ -74,5 +74,5 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         tag_name: ${{ github.ref }}
-        release_name: New release draft ${{ github.ref }}
+        release_name: ${{ github.ref }} draft
         draft: true
