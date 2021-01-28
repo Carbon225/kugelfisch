@@ -1,0 +1,69 @@
+name: Release
+
+on:
+  push:
+    branches: [ release ]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  test:
+    strategy:
+      matrix:
+        os: ['windows-2019', 'ubuntu-20.04']
+        
+    runs-on: ${{ matrix.os }}
+            
+    steps:
+    - uses: actions/checkout@v2
+      
+    - name: Build
+      run: cargo build --verbose
+    
+    - name: Run tests
+      run: cargo test --verbose
+
+  build-release:
+    needs: [test, create-release]
+    strategy:
+      matrix:
+        os: ['windows-2019', 'ubuntu-20.04']
+        
+    runs-on: ${{ matrix.os }}
+            
+    steps:
+    - uses: actions/checkout@v2
+      
+    - name: Build
+      run: cargo build --release --verbose
+      
+    - name: Upload release assets (Linux)
+      if: startsWith(${{ matrix.os }}, 'ubuntu')
+      uses: actions/upload-release-asset@v1
+      with:
+        upload_url: ${{ needs.create-release.outputs.upload_url }}
+        asset_path: target/release/kugelfisch
+        asset_name: 'kugelfisch-linux-amd64'
+        
+    - name: Upload release assets (Windows)
+      if: startsWith(${{ matrix.os }}, 'windows')
+      uses: actions/upload-release-asset@v1
+      with:
+        upload_url: ${{ needs.create-release.outputs.upload_url }}
+        asset_path: target/release/kugelfisch.exe
+        asset_name: 'kugelfisch-windows-amd64.exe'
+      
+  create-release:
+    runs-on: ubuntu-latest
+    needs: test
+    outputs:
+      upload_url: ${{ steps.create.outputs.upload_url }}
+    steps:
+    - name: Create release draft
+      id: create
+      uses: actions/create-release@v1
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: New release draft
+        draft: true
