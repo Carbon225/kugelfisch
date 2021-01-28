@@ -45,6 +45,7 @@ jobs:
         upload_url: ${{ needs.create-release.outputs.upload_url }}
         asset_path: target/release/kugelfisch
         asset_name: 'kugelfisch-linux-amd64'
+        asset_content_type: application/octet-stream
         
     - name: Upload release assets (Windows)
       if: startsWith(${{ matrix.os }}, 'windows')
@@ -53,6 +54,7 @@ jobs:
         upload_url: ${{ needs.create-release.outputs.upload_url }}
         asset_path: target/release/kugelfisch.exe
         asset_name: 'kugelfisch-windows-amd64.exe'
+        asset_content_type: application/vnd.microsoft.portable-executable
       
   create-release:
     runs-on: ubuntu-latest
