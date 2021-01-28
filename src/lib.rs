@@ -2,6 +2,7 @@ mod blowfish;
 mod cbc;
 mod file_encrypt;
 mod handle_intent;
+mod passphrase;
 
 use crate::handle_intent::{handle_decrypt, handle_encrypt};
 

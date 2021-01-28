@@ -1,11 +1,10 @@
 use crate::file_encrypt::{encrypt_file, decrypt_file};
 use crate::{ProgramError};
+use crate::passphrase::derive_key;
 
 use std::error::Error;
 use std::fs::File;
 use std::io::{Read, Write};
-use blake2::VarBlake2b;
-use blake2::digest::{Update, VariableOutput};
 
 pub fn handle_encrypt(path: &str, passphrase: Option<&str>) -> Result<(), ProgramError> {
     let out_path = String::from(path) + ".kugelfisch";
@@ -70,18 +69,4 @@ fn get_passphrase(option: Option<&str>) -> Result<String, std::io::Error> {
         std::io::stdin().read_line(&mut pass)?;
         Ok(pass)
     }
-}
-
-fn derive_key(passphrase: &str) -> Vec<u32> {
-    let mut hasher = VarBlake2b::new(56).unwrap();
-    hasher.update(passphrase.as_bytes());
-    let mut key = vec![0u32; 14];
-    hasher.finalize_variable(|res| {
-        for i in 0..14 {
-            let mut x = [0u8; 4];
-            x.copy_from_slice(&res[i * 4..i * 4 + 4]);
-            key[i] = u32::from_le_bytes(x);
-        }
-    });
-    return key;
 }
