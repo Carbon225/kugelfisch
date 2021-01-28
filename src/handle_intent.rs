@@ -37,25 +37,13 @@ pub fn handle_decrypt(path: &str, passphrase: Option<&str>) -> Result<(), Progra
 fn process_file<F>(path: &str, out: &str,
                    op: F) -> Result<(), ProgramError>
     where F: Fn(&mut dyn Read, &mut dyn Write) -> Result<(), Box<dyn Error>> {
-    let mut i_file = match File::open(path) {
-        Ok(f) => f,
-        Err(e) => {
-            return Err(ProgramError::ErrorOpening(String::from(path), Box::from(e)));
-        }
-    };
+    let mut i_file = File::open(path)
+        .map_err(|e| ProgramError::ErrorOpening(String::from(path), Box::from(e)))?;
 
-    let mut o_file = match File::create(out) {
-        Ok(f) => f,
-        Err(e) => {
-            return Err(ProgramError::ErrorCreating(String::from(out), Box::from(e)));
-        }
-    };
+    let mut o_file = File::create(out)
+        .map_err(|e| ProgramError::ErrorCreating(String::from(out), Box::from(e)))?;
 
-    if let Err(e) = op(&mut i_file, &mut o_file) {
-        return Err(ProgramError::OperationFailed(Box::from(e)));
-    };
-
-    Ok(())
+    op(&mut i_file, &mut o_file).map_err(|e| ProgramError::OperationFailed(e))
 }
 
 fn get_passphrase(option: Option<&str>) -> Result<String, std::io::Error> {
