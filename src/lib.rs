@@ -49,7 +49,7 @@ impl Error for ProgramError {}
 
 pub fn run_program(intent: &ProgramIntent) -> Result<(), ProgramError> {
     match intent {
-        ProgramIntent::Encrypt(config) => handle_encrypt(config.input_path, config.passphrase),
-        ProgramIntent::Decrypt(config) => handle_decrypt(config.input_path, config.passphrase),
+        ProgramIntent::Encrypt(config) => handle_encrypt(config),
+        ProgramIntent::Decrypt(config) => handle_decrypt(config),
     }
 }
