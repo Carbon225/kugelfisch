@@ -1,22 +1,16 @@
-use kugelfisch::{ProgramIntent, ProgramConfig, ProgramError, run_program};
+mod arg_parser;
+
+use arg_parser::parse_args;
+use kugelfisch::{run_program, ProgramError};
 
 fn main() {
     let args: Vec<String> = std::env::args().collect();
-    if args.len() < 3 {
-        eprintln!("Usage: {} e|d FILE [PASSPHRASE]", args[0]);
-        return;
+    let args_ref: Vec<&str> = args.iter().map(|arg| arg.as_str()).collect();
+
+    if let Some(e) = parse_args(args_ref).and_then(|intent| run_program(&intent)).err() {
+        eprintln!("{}", e);
+        if let ProgramError::InvalidArgs(_) = e {
+            eprintln!("Usage: {} [-e] [-d] [-p PASSPHRASE] INPUT OUTPUT", args[0]);
+        }
     }
-
-    let passphrase = if args.len() < 4 {
-        None
-    } else {
-        Some(args[3].as_str())
-    };
-
-    let config = ProgramConfig::new(&args[2], passphrase);
-    match args[1].as_str() {
-        "e" => run_program(&ProgramIntent::Encrypt(config)),
-        "d" => run_program(&ProgramIntent::Decrypt(config)),
-        _ => Err(ProgramError::InvalidMode(String::from(&args[1])))
-    }.unwrap_or_else(|e| eprintln!("{}", e));
 }
