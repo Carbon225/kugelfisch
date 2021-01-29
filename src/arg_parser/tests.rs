@@ -1,5 +1,5 @@
 use super::parse_args;
-use crate::ProgramIntent;
+use kugelfisch::ProgramIntent;
 
 fn assert_encrypt(intent: &ProgramIntent,
                   input: &str,
