@@ -10,9 +10,9 @@ use std::error::Error;
 use std::fmt::{Display, Debug, Formatter};
 
 pub struct ProgramConfig<'a> {
-    input_path: &'a str,
-    output_path: &'a str,
-    passphrase: Option<&'a str>,
+    pub input_path: &'a str,
+    pub output_path: &'a str,
+    pub passphrase: Option<&'a str>,
 }
 
 impl<'a> ProgramConfig<'a> {
