@@ -79,7 +79,7 @@ fn no_such_file() -> Result<(), Box<dyn std::error::Error>> {
     kf(&["-e", "-p", "passwd", "no/such/file", "to"])?
         .assert()
         .failure()
-        .stderr(predicate::str::contains("No such file"));
+        .stderr(predicate::str::contains("Error opening"));
     Ok(())
 }
 
