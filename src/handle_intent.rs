@@ -49,6 +49,7 @@ fn get_passphrase(option: Option<&str>) -> Result<String, std::io::Error> {
         std::io::stdout().flush()?;
         let mut pass = String::new();
         std::io::stdin().read_line(&mut pass)?;
-        Ok(pass)
+        let pass = pass.trim_end();
+        Ok(pass.to_owned())
     }
 }

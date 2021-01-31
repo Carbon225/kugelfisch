@@ -75,7 +75,6 @@ const TEST_DATA: &str = "Test data to encrypt\nwith blowfish\n";
 // --- TESTS ---
 
 #[test]
-#[ignore]
 fn no_such_file() -> Result<(), Box<dyn std::error::Error>> {
     kf(&["-e", "-p", "passwd", "no/such/file", "to"])?
         .assert()
@@ -143,7 +142,6 @@ fn encrypt_decrypt_stdin() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 #[test]
-#[ignore]
 fn encrypt_stdin_lfcr_decrypt() -> Result<(), Box<dyn std::error::Error>> {
     let (left, right) = test_encrypt_decrypt(
         &["-e"], Some("1234\n\r"),
@@ -154,7 +152,6 @@ fn encrypt_stdin_lfcr_decrypt() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 #[test]
-#[ignore]
 fn encrypt_decrypt_stdin_lfcr() -> Result<(), Box<dyn std::error::Error>> {
     let (left, right) = test_encrypt_decrypt(
         &["-e", "-p", "1234"], None,
