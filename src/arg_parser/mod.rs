@@ -3,7 +3,7 @@ mod tests;
 
 use kugelfisch::{ProgramIntent, ProgramConfig, ProgramError};
 
-pub fn parse_args(mut args: Vec<&str>) -> Result<ProgramIntent, ProgramError> {
+pub fn parse_args(args: Vec<&str>) -> Result<ProgramIntent, ProgramError> {
     let err = |msg: &str| Err(ProgramError::InvalidArgs(msg.to_owned()));
 
     enum Mode {
@@ -14,7 +14,10 @@ pub fn parse_args(mut args: Vec<&str>) -> Result<ProgramIntent, ProgramError> {
     let mut mode = None;
     let mut pass = None;
 
-    let mut i = 0;
+    let mut from = None;
+    let mut to = None;
+
+    let mut i = 1;
     while i < args.len() {
         match args[i] {
             "-e" => {
@@ -22,31 +25,38 @@ pub fn parse_args(mut args: Vec<&str>) -> Result<ProgramIntent, ProgramError> {
                     return err("Conflicting arguments: -d -e");
                 }
                 mode = Some(Mode::Encrypt);
-                args.remove(i);
+                i += 1;
             }
             "-d" => {
                 if mode.is_some() {
                     return err("Conflicting arguments: -e -d");
                 }
                 mode = Some(Mode::Decrypt);
-                args.remove(i);
+                i += 1;
             }
             "-p" => {
                 if i + 1 >= args.len() {
                     return err("-p used without passphrase");
                 }
                 pass = Some(args[i + 1]);
-                args.remove(i);
-                args.remove(i);
+                i += 2;
             }
-            _ => i += 1
+            other => {
+                if from.is_none() {
+                    from = Some(other);
+                }
+                else if to.is_none() {
+                    to = Some(other);
+                }
+                else {
+                    return err("Invalid arguments");
+                }
+                i += 1;
+            }
         }
     }
 
-    let to = args.pop();
-    let from = args.pop();
-
-    if args.len() == 0 {
+    if from.is_none() || to.is_none() {
         return err("Not enough arguments");
     }
 
