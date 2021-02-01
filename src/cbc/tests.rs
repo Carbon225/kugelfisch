@@ -41,7 +41,7 @@ fn encrypt_stream() {
     let mut data = vec![0xde, 0xad, 0xbe, 0xef];
     let expected = [0xde, 0x8c, 0xcd, 0xdd];
 
-    let mut encryptor = Encryptor { algo: &algo, prev: data[0]};
+    let mut encryptor = Encryptor::new(&algo, data[0]);
 
     for i in 1..data.len() {
         data[i] = encryptor.next(data[i]);
@@ -55,7 +55,7 @@ fn decrypt_stream() {
     let mut data = vec![0xde, 0x8c, 0xcd, 0xdd];
     let expected = [0xde, 0xad, 0xbe, 0xef];
 
-    let mut decryptor = Decryptor { algo: &algo, prev: data[0]};
+    let mut decryptor = Decryptor::new(&algo, data[0]);
 
     for i in 1..data.len() {
         data[i] = decryptor.next(data[i]);
