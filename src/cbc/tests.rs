@@ -63,3 +63,29 @@ fn decrypt_stream() {
 
     assert_eq!(data, expected)
 }
+
+#[test]
+fn encrypt_iter() {
+    let data: Vec<u8> = vec![0xde, 0xad, 0xbe, 0xef];
+    let expected: [u8; 3] = [0x8c, 0xcd, 0xdd];
+
+    let enc: Vec<u8> = data
+        .into_iter()
+        .encrypt(&algo)
+        .collect();
+
+    assert_eq!(enc, expected);
+}
+
+#[test]
+fn decrypt_iter() {
+    let data = vec![0xdeu8, 0x8c, 0xcd, 0xdd];
+    let expected = [0xad, 0xbe, 0xef];
+
+    let enc: Vec<u8> = data
+        .into_iter()
+        .decrypt(&algo)
+        .collect();
+
+    assert_eq!(enc, expected);
+}

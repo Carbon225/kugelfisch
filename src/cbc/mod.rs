@@ -7,6 +7,9 @@ pub use slice::*;
 mod processor;
 pub use processor::*;
 
+mod iterable;
+pub use iterable::*;
+
 use std::ops::BitXor;
 
 pub trait Block: Copy + BitXor<Output=Self> {}
