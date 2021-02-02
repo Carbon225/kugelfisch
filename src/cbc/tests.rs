@@ -1,4 +1,5 @@
 use super::*;
+use std::io::{Read, Write, Seek, SeekFrom};
 
 fn algo(x: u8) -> u8 {
     !x
@@ -88,4 +89,18 @@ fn decrypt_iter() {
         .collect();
 
     assert_eq!(enc, expected);
+}
+
+#[test]
+fn encrypt_bytes() -> Result<(), Box<dyn std::error::Error>> {
+    let mut file = tempfile::tempfile()?;
+    file.write_all(&[0xde, 0xad, 0xbe, 0xef])?;
+
+    file.seek(SeekFrom::Start(0))?;
+
+    let data: Vec<u8> =  file.bytes().map(|b| b.unwrap()).encrypt(&algo).collect();
+
+    assert_eq!(data, [0x8c, 0xcd, 0xdd]);
+
+    Ok(())
 }
